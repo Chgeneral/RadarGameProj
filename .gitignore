@@ -1,0 +1,30 @@
+# ============ Keil MDK-ARM 编译产物（均可重新生成） ============
+# 编译输出目录：.o/.crf/.d/.axf/.hex/.map/.build_log.htm 等
+MDK-ARM/RadarGameProj/
+
+# 每个用户各自的界面布局 / 调试选项（不该进版本库）
+*.uvguix.*
+*.uvoptx
+
+# 依赖、备份
+*.bak
+*.dep
+
+# ============ 调试器 / 日志 ============
+JLinkLog.txt
+JLinkSettings.ini
+*.scvd
+MDK-ARM/DebugConfig/
+
+# ============ 顶层散落的编译产物 ============
+*.o
+*.d
+*.crf
+*.axf
+*.hex
+*.bin
+*.map
+*.lst
+*.lnp
+*.iex
+*.htm
