@@ -20,6 +20,7 @@
 #include "driver_lcd.h"
 #include "driver_mpu6050.h"
 #include "driver_rotary_encoder.h"
+#include "radar_manager.h"
 
 #define NOINVERT	false
 #define INVERT		true
@@ -80,6 +81,7 @@ static uint8_t *g_framebuffer;
 extern volatile bool switchToGame;
 static bool needFullDraw = true;
 extern SemaphoreHandle_t g_oledMutex;
+extern EventGroupHandle_t g_sysEvent;
 
 /*需求队列*/
 QueueHandle_t xQueueEncoder;//旋转编码器队列
@@ -217,21 +219,46 @@ void game1_task(void *params)
 	/*创建队列，队列集*/
 	Input_ObjectsCreate();
     /*创建任务*/
-	xTaskCreate(EncoderTask, "EncoderTask", 128, NULL, osPriorityNormal + 2, NULL);
-	xTaskCreate(MpuTask, "MpuTask", 128, NULL, osPriorityNormal + 2, NULL);
-	xTaskCreate(InputTask, "InputTask", 128, NULL, osPriorityNormal + 2, NULL);
+	xTaskCreate(EncoderTask, "EncoderTask", 256, NULL, osPriorityNormal + 2, NULL);
+	xTaskCreate(MpuTask, "MpuTask", 256, NULL, osPriorityNormal + 2, NULL);
+	xTaskCreate(InputTask, "InputTask", 256, NULL, osPriorityNormal + 2, NULL);
 
     while (1)
     {
 		LCD_ClearFrameBuffer(); //清空帧缓存
-
 		draw_end();
-
 		game1_reset(); //重置游戏
+		
+		bool paused = false;
 		while (switchToGame) // 还在游戏页
 		{
-			game1_draw();
-			vTaskDelay(50);
+			/*等待有人*/
+			EventBits_t b=xEventGroupWaitBits(g_sysEvent, EVT_PLAYER_PRESENT, 
+												pdFALSE, pdTRUE, pdMS_TO_TICKS(150));
+			if(b & EVT_PLAYER_PRESENT)
+			{
+				if (paused)                       /* 刚从暂停恢复：清屏 + 触发砖块整屏重绘 */
+				{
+					paused = false;
+					LCD_ClearFrameBuffer();
+					draw_end();
+					needFullDraw = true;
+				}
+				game1_draw();
+				vTaskDelay(50);
+			}
+			else
+			{
+				if (!paused)                      /* 只画一次暂停屏，避免反复刷 */
+				{
+					paused = true;
+					LCD_ClearFrameBuffer();
+					draw_string("PAUSED",    false, 46, 20);   /* 坐标可自己微调居中 */
+					draw_string("NO PLAYER", false, 37, 36);
+					draw_end();                   /* draw_end 内部自带 g_oledMutex，不用手动加锁 */
+				}
+				vTaskDelay(pdMS_TO_TICKS(100));
+			}
 		}
 
 		vTaskSuspend(NULL); //在任务内部进行挂起

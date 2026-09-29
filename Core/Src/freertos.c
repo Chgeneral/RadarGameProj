@@ -54,13 +54,13 @@ extern SemaphoreHandle_t g_oledMutex;
 /* USER CODE BEGIN FunctionPrototypes */
 void WaitForI2C(void)
 {
-	/*�ȴ�һ��������*/
+	/*�ȴ�һ��������*/
 	xSemaphoreTake(g_oledMutex, portMAX_DELAY);
 }
 
 void ReleaseI2C(void)
 {
-	/*�ͷŻ�����*/
+	/*�ͷŻ�����*/
 	xSemaphoreGive(g_oledMutex);
 }
 
@@ -84,5 +84,24 @@ void vApplicationGetIdleTaskMemory( StaticTask_t **ppxIdleTaskTCBBuffer, StackTy
 
 /* Private application code --------------------------------------------------*/
 /* USER CODE BEGIN Application */
+volatile char  *g_ovfTaskName;      /* 溢出的任务名 */
+volatile uint32_t g_mallocFailCount;
+
+void vApplicationStackOverflowHook(TaskHandle_t xTask, char *pcTaskName)
+{
+	(void)xTask;
+	g_ovfTaskName = pcTaskName;       /* ← 直接告诉你是谁溢出了 */
+    __BKPT(0);
+    taskDISABLE_INTERRUPTS();
+    for(;;);
+}
+
+void vApplicationMallocFailedHook(void)
+{
+	g_mallocFailCount++;              /* ← 堆不够时不再静默 */
+    __BKPT(0);
+    taskDISABLE_INTERRUPTS();
+    for(;;);
+}
 
 /* USER CODE END Application */

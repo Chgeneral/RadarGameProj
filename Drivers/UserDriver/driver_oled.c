@@ -495,12 +495,12 @@ void OLED_SetPosition(uint8_t page, uint8_t col)
 void OLED_Clear(void)
 {
     uint8_t i = 0;
-    uint8_t buf[128] = {0};
+    static const uint8_t zeros[128] = {0};
     
     for(i=0; i<8; i++)
     {
         OLED_SetPosition(i, 0);
-        OLED_WriteNBytes(&buf[0], 128);
+        OLED_WriteNBytes((uint8_t *)zeros, 128);
     }
 }
 

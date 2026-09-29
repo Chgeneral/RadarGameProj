@@ -28,3 +28,9 @@ MDK-ARM/DebugConfig/
 *.lnp
 *.iex
 *.htm
+
+# ============ STM32CubeMX 代码生成临时/备份产物 ============
+MXTmpFiles/
+*.ftl
+*.ftl_save
+*_save

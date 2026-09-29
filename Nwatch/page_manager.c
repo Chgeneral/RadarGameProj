@@ -35,7 +35,7 @@ static void StartPageSwitchTask(void *params)
 				else
 				{
 					switchToGame = true;
-					while ((eTaskGetState(defaultTaskHandle) != eSuspended)) //等game1真的挂起
+					while ((eTaskGetState(defaultTaskHandle) != eSuspended)) //等defaultTask真的挂起
 					{
 						vTaskDelay(pdMS_TO_TICKS(5));
 					}

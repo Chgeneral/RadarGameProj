@@ -136,6 +136,11 @@ standard names. */
 /* USER CODE BEGIN Defines */
 /* Section where parameter definitions can be added (for instance, to override default ones in FreeRTOS.h) */
 #define configUSE_QUEUE_SETS 1
+#define INCLUDE_xSemaphoreGetMutexHolder 1
+#define configCHECK_FOR_STACK_OVERFLOW          2      /* 原来没定义 = 0 */
+#define configUSE_MALLOC_FAILED_HOOK            1      /* 原来没定义 = 0 */
+#define INCLUDE_uxTaskGetStackHighWaterMark     1      /* 用来量栈余量 */
+#define INCLUDE_xTaskGetHandle                  1      /* 按名字找任务 */
 /* USER CODE END Defines */
 
 #endif /* FREERTOS_CONFIG_H */

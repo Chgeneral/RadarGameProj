@@ -65,7 +65,11 @@ void draw_string(char* string, bool invert, byte x, byte y)
 
 inline static void setBuffByte(byte* buff, byte x, byte y, byte val)//, byte colour)
 {
+	if (x>=g_xres || y>= g_yres) return;
+	
 	uint32_t pos = x + (y / 8) * g_xres;
+	if (pos >= (g_xres * g_yres / 8)) return;
+	
 	buff[pos] |= val;
 }
 
