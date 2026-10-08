@@ -108,8 +108,7 @@ heap_4 共 15360 字节，实际占用约 9KB（任务栈 + TCB 约 8.3KB，内�
 2. **MPU 读取应改突发读**：现在对 6 个 16 位量做了 12 次单字节 `HAL_I2C_Mem_Read`，既慢又可能让高低字节跨采样撕裂。应从 `0x3B` 一次连读 14 字节。
 3. **`acos` 开销不必要**：F407 的 FPU 只有单精度硬件，double 版 `acos` 全靠软件库；而需求只是"左/右/死区"三态，直接用原始加速度比阈值即可。
 4. **DMA 配了未用**：CubeMX 已配 `DMA1_Stream5 → USART2_RX` 并 `__HAL_LINKDMA`，但代码用的是 `..._IT` 版本，改成 `HAL_UARTEx_ReceiveToIdle_DMA` 即可。
-5. **雷达阈值方向待实测**：`if (frame[1] > GATE)` 按"距离字节、0x00 表示无人"的注释，人离得很近时会被判成无人，需上板核对。
-6. 其他：裸 tick 数与 `pdMS_TO_TICKS` 混用；死代码 `btnExit`/`btnRight`/`btnLeft` 待删；队列对象应移到 `main.c` 的 `RTOS_QUEUES` 段统一创建；部分文件注释编码为 GBK/乱码，待统一 UTF-8。
+5. 其他：裸 tick 数与 `pdMS_TO_TICKS` 混用；死代码 `btnExit`/`btnRight`/`btnLeft` 待删；队列对象应移到 `main.c` 的 `RTOS_QUEUES` 段统一创建；部分文件注释编码为 GBK/乱码，待统一 UTF-8。
 
 ## 目录结构
 
